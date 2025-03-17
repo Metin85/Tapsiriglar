@@ -1,0 +1,10 @@
+a=int(input("Enter initial deposit"))
+b=input("withdraw" " " "or" " " "deposit")
+if b=="deposit":
+  c=int(input("enter the amount of money"))
+  d=a+c
+  print("Your balance",d)
+if b=="withdraw":
+  c=int(input("enter the amount of money"))
+  d=a-c
+  print("Your Balance",d)
