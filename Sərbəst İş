@@ -1,0 +1,163 @@
+import json
+import time
+
+tasks = []
+FILENAME = "tasks.json"
+
+def welcome_screen():
+    print("Welcome to the Task and To-Do Manager\n")
+
+def show_menu():
+    print("\nMain Menu:")
+    print("1. Add New Task")
+    print("2. View All Tasks")
+    print("3. Search Task")
+    print("4. Update Task")
+    print("5. Delete Task")
+    print("6. Calculate Summary Stats")
+    print("7. Save Tasks to File")
+    print("8. Load Tasks from File")
+    print("9. Help/Instructions")
+    print("10. Clear All Data")
+    print("0. Exit")
+
+def input_int(prompt):
+    while True:
+        try:
+            return int(input(prompt))
+        except ValueError:
+            print("Please enter a valid number.")
+
+def add_task():
+    task = {
+        "id": input("Enter task ID: "),
+        "title": input("Enter task title: "),
+        "description": input("Enter description: "),
+        "status": input("Enter status (e.g., Pending, Completed): ")
+    }
+    tasks.append(task)
+    print("Task added successfully.")
+
+def view_tasks():
+    if not tasks:
+        print("No tasks available.")
+        return
+    for t in tasks:
+        print(f"ID: {t['id']}, Title: {t['title']}, Status: {t['status']}")
+        print(f"Description: {t['description']}")
+        print("-" * 40)
+
+def search_task():
+    keyword = input("Enter task ID or title to search: ").lower()
+    found = False
+    for t in tasks:
+        if keyword in t["id"].lower() or keyword in t["title"].lower():
+            print(t)
+            found = True
+    if not found:
+        print("No matching task found.")
+
+def update_task():
+    task_id = input("Enter task ID to update: ")
+    for t in tasks:
+        if t["id"] == task_id:
+            t["title"] = input("Enter new title: ")
+            t["description"] = input("Enter new description: ")
+            t["status"] = input("Enter new status: ")
+            print("Task updated.")
+            return
+    print("Task not found.")
+
+def delete_task():
+    task_id = input("Enter task ID to delete: ")
+    for i, t in enumerate(tasks):
+        if t["id"] == task_id:
+            del tasks[i]
+            print("Task deleted.")
+            return
+    print("Task not found.")
+
+def summary_stats():
+    total = len(tasks)
+    completed = sum(1 for t in tasks if t["status"].lower() == "completed")
+    print(f"Total Tasks: {total}")
+    print(f"Completed Tasks: {completed}")
+
+def save_tasks():
+    try:
+        with open(FILENAME, "w") as f:
+            json.dump(tasks, f, indent=4)
+        print("Tasks saved to file.")
+    except Exception as e:
+        print("Error saving file:", e)
+
+def load_tasks():
+    global tasks
+    try:
+        with open(FILENAME, "r") as f:
+            tasks = json.load(f)
+        print("Tasks loaded from file.")
+    except FileNotFoundError:
+        print("No saved tasks found.")
+    except Exception as e:
+        print("Error loading file:", e)
+
+def count_tasks_recursively(index=0):
+    if index == len(tasks):
+        return 0
+    return 1 + count_tasks_recursively(index + 1)
+
+def show_help():
+    print("""
+Instructions:
+- Use menu numbers to perform actions.
+- Tasks have ID, title, description, and status.
+- Save your work before exiting to avoid loss.
+- Use the 'Clear All' option cautiously!
+""")
+
+def clear_all():
+    confirm = input("Are you sure you want to delete all tasks? (yes/no): ").lower()
+    if confirm == "yes":
+        tasks.clear()
+        print("All tasks cleared.")
+    else:
+        print("Operation cancelled.")
+
+def main():
+    welcome_screen()
+    while True:
+        try:
+            show_menu()
+            choice = input_int("Enter your choice: ")
+            if choice == 1:
+                add_task()
+            elif choice == 2:
+                view_tasks()
+            elif choice == 3:
+                search_task()
+            elif choice == 4:
+                update_task()
+            elif choice == 5:
+                delete_task()
+            elif choice == 6:
+                summary_stats()
+            elif choice == 7:
+                save_tasks()
+            elif choice == 8:
+                load_tasks()
+            elif choice == 9:
+                show_help()
+            elif choice == 10:
+                clear_all()
+            elif choice == 0:
+                print("Exiting... Goodbye!")
+                break
+            else:
+                print("Invalid option.")
+        except Exception as e:
+            print("An error occurred:", e)
+
+if __name__ == "__main__":
+    main()
+```
